@@ -13,6 +13,7 @@ Sorting is the process of arranging data (numbers, strings, records) in **ascend
 - [When to Use Which Algorithm](#when-to-use-which-algorithm)
 - [Summary Table](#summary-table)
 - [Code Example: Bubble Sort (Sort Colors)](#code-example-bubble-sort-sort-colors)
+- [Code Example: Valid Parentheses (Stack)](#code-example-valid-parentheses-stack)
 - [Conclusion](#conclusion)
 
 ---
@@ -128,6 +129,36 @@ class Solution:
 **Complexity:** O(n²) worst/average time, O(n) best case (already sorted, thanks to the `swapped` flag), O(1) extra space.
 
 > Note: Sort Colors can be solved in O(n) time with the Dutch National Flag algorithm or Counting Sort, which is what interviewers usually expect.
+
+---
+
+## Code Example: Valid Parentheses (Stack)
+
+Checks whether a string of brackets `()[]{}` is balanced, using a stack (LeetCode "Valid Parentheses").
+
+```python
+class Solution:
+    def isValid(self, s: str) -> bool:
+        stack = []
+        pairs = {')': '(', ']': '[', '}': '{'}
+
+        for ch in s:
+            if ch in pairs:  # closing bracket
+                if not stack or stack.pop() != pairs[ch]:
+                    return False
+            else:  # opening bracket
+                stack.append(ch)
+
+        return not stack  # valid only if nothing is left open
+```
+
+**How it works:**
+
+- Opening brackets are pushed onto the stack.
+- For each closing bracket, the top of the stack must be its matching opening bracket, otherwise the string is invalid.
+- At the end, the stack must be empty, meaning every opening bracket was closed.
+
+**Complexity:** O(n) time, O(n) space.
 
 ---
 
