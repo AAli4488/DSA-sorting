@@ -1,67 +1,143 @@
-# Valid Parentheses (LeetCode #20)
+# Sorting in DSA
 
-**Difficulty:** Easy
-**Topics:** String, Stack
-**Link:** https://leetcode.com/problems/valid-parentheses/
+Sorting is the process of arranging data (numbers, strings, records) in **ascending** or **descending** order. It is a foundational concept in Data Structures and Algorithms and underpins binary search, interval merging, scheduling, database indexing, and many algorithmic optimizations.
 
-## Problem
+---
 
-Given a string `s` containing only the characters `'('`, `')'`, `'{'`, `'}'`, `'['` and `']'`, determine if the input string is valid.
+## Table of Contents
 
-A string is valid if:
+- [What Sorting Means](#what-sorting-means)
+- [Categories of Sorting](#categories-of-sorting)
+- [Internal vs External Sorting](#internal-vs-external-sorting)
+- [Stability](#stability)
+- [When to Use Which Algorithm](#when-to-use-which-algorithm)
+- [Summary Table](#summary-table)
+- [Code Example: Bubble Sort (Sort Colors)](#code-example-bubble-sort-sort-colors)
+- [Conclusion](#conclusion)
 
-1. Open brackets are closed by the same type of bracket.
-2. Open brackets are closed in the correct order.
-3. Every closing bracket has a corresponding open bracket of the same type.
+---
 
-## Examples
+## What Sorting Means
 
-| Input      | Output  | Reason                                  |
-|------------|---------|-----------------------------------------|
-| `"()[]{}"` | `True`  | Every bracket is closed by its match    |
-| `"(]"`     | `False` | Wrong type of closing bracket           |
-| `"([)]"`   | `False` | Brackets are closed in the wrong order  |
-| `"{[]}"`   | `True`  | Properly nested                         |
-| `"(("`     | `False` | Opening brackets are never closed       |
+Sorting rearranges elements so they follow a logical sequence (e.g., smallest to largest). It is essential for:
 
-## Approach
+- Binary search
+- Interval merging
+- Scheduling
+- Database indexing
+- Many algorithmic optimizations
 
-Use a **stack**:
+---
 
-1. Go through the string one character at a time.
-2. If the character is an opening bracket, push it onto the stack.
-3. If it is a closing bracket, the top of the stack must be its matching opener. If the stack is empty or the top doesn't match, return `False`.
-4. After the loop, the string is valid only if the stack is empty (no unclosed brackets remain).
+## Categories of Sorting
 
-## Solution
+### 1. Comparison-Based Sorting
+
+These algorithms compare elements to determine their order.
+
+| Algorithm | Time Complexity | Space | Notes |
+|-----------|-----------------|-------|-------|
+| Bubble Sort | O(n²) | O(1) | Simple, rarely used in practice |
+| Selection Sort | O(n²) | O(1) | Fewer swaps |
+| Insertion Sort | O(n²) | O(1) | Fast on small or nearly sorted data |
+| Merge Sort | O(n log n) | O(n) | Stable |
+| Quick Sort | O(n log n) avg, O(n²) worst | O(log n) | In-place, fast on average |
+| Heap Sort | O(n log n) | O(1) | In-place |
+
+### 2. Non-Comparison-Based Sorting
+
+Used when the input range is known.
+
+| Algorithm | Time Complexity | Notes |
+|-----------|-----------------|-------|
+| Counting Sort | O(n + k) | Best for small integer ranges |
+| Radix Sort | O(nk) | Sorts digit by digit |
+| Bucket Sort | O(n) average | Works well on uniformly distributed data |
+
+---
+
+## Internal vs External Sorting
+
+- **Internal Sorting:** The entire dataset fits in RAM (Bubble, Insertion, Quick, Merge).
+- **External Sorting:** Used when data is too large for memory (e.g., external Merge Sort).
+
+---
+
+## Stability
+
+A **stable** algorithm preserves the relative order of equal elements.
+
+- **Stable:** Merge Sort, Insertion Sort, Bubble Sort
+- **Unstable:** Quick Sort, Heap Sort
+
+---
+
+## When to Use Which Algorithm
+
+| Scenario | Best Algorithm | Reason |
+|----------|----------------|--------|
+| Small or nearly sorted data | Insertion Sort | Adaptive, fast for small inputs |
+| Large random datasets | Quick Sort | Fast average-case performance |
+| Worst-case guarantees | Merge Sort / Heap Sort | Always O(n log n) |
+| Integers with limited range | Counting / Radix Sort | Linear time |
+
+---
+
+## Summary Table
+
+| Algorithm | Time Complexity | Space | Stable | Type |
+|-----------|-----------------|-------|--------|------|
+| Bubble Sort | O(n²) | O(1) | Yes | Comparison |
+| Selection Sort | O(n²) | O(1) | No | Comparison |
+| Insertion Sort | O(n²) | O(1) | Yes | Comparison |
+| Merge Sort | O(n log n) | O(n) | Yes | Comparison |
+| Quick Sort | O(n log n) avg, O(n²) worst | O(log n) | No | Comparison |
+| Heap Sort | O(n log n) | O(1) | No | Comparison |
+| Counting Sort | O(n + k) | O(k) | Yes | Non-comparison |
+| Radix Sort | O(nk) | O(n + k) | Yes | Non-comparison |
+
+---
+
+## Code Example: Bubble Sort (Sort Colors)
+
+Bubble Sort with an early-exit optimization, applied to the LeetCode "Sort Colors" problem.
 
 ```python
 class Solution:
-    def isValid(self, s: str) -> bool:
-        stack = []
-        pairs = {')': '(', ']': '[', '}': '{'}
+    def sortColors(self, nums: List[int]) -> None:
+        n = len(nums)
 
-        for ch in s:
-            if ch in pairs:  # closing bracket
-                if not stack or stack.pop() != pairs[ch]:
-                    return False
-            else:  # opening bracket
-                stack.append(ch)
+        for i in range(n - 1):
+            swapped = False
 
-        return not stack  # valid only if nothing is left open
+            for j in range(n - 1 - i):
+                if nums[j] > nums[j + 1]:
+                    nums[j], nums[j + 1] = nums[j + 1], nums[j]
+                    swapped = True
+
+            if not swapped:  # already sorted, stop early
+                break
 ```
 
-## Complexity
+**How it works:**
 
-- **Time:** O(n), since each character is processed once.
-- **Space:** O(n), since the stack can hold up to n characters in the worst case.
+- Each pass compares adjacent elements and swaps them if they are out of order, pushing the largest remaining element to the end.
+- The inner loop shrinks by `i` each pass because the last `i` elements are already in place.
+- If a full pass makes no swaps, the array is sorted and the loop stops early.
 
-## Running Locally
+**Complexity:** O(n²) worst/average time, O(n) best case (already sorted, thanks to the `swapped` flag), O(1) extra space.
 
-```python
-sol = Solution()
-print(sol.isValid("()[]{}"))  # True
-print(sol.isValid("(]"))      # False
-print(sol.isValid("([)]"))    # False
-print(sol.isValid("{[]}"))    # True
-print(sol.isValid("(("))      # False
+> Note: Sort Colors can be solved in O(n) time with the Dutch National Flag algorithm or Counting Sort, which is what interviewers usually expect.
+
+---
+
+## Conclusion
+
+Sorting is one of the most fundamental concepts in DSA and forms the basis of many advanced algorithms and interview problems. Choosing the right algorithm depends on data size, range, memory constraints, and whether stability matters.
+
+---
+
+## References
+
+- [GeeksforGeeks – Sorting Algorithms](https://www.geeksforgeeks.org/sorting-algorithms/)
+- [GUVI – Sorting Algorithms](https://www.guvi.in)
