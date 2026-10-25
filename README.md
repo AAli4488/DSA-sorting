@@ -1,3 +1,125 @@
+# LeetCode 23. Merge k Sorted Lists
+
+**Difficulty:** Hard
+**Link:** https://leetcode.com/problems/merge-k-sorted-lists/
+
+## Problem
+
+You are given an array of `k` linked-lists `lists`, each linked-list is sorted in ascending order.
+
+Merge all the linked-lists into one sorted linked-list and return it.
+
+### Example 1
+
+```
+Input:  lists = [[1,4,5],[1,3,4],[2,6]]
+Output: [1,1,2,3,4,4,5,6]
+```
+
+The linked-lists are:
+
+```
+1->4->5
+1->3->4
+2->6
+```
+
+Merging them into one sorted list: `1->1->2->3->4->4->5->6`
+
+### Example 2
+
+```
+Input:  lists = []
+Output: []
+```
+
+### Example 3
+
+```
+Input:  lists = [[]]
+Output: []
+```
+
+### Constraints
+
+- `k == lists.length`
+- `0 <= k <= 10^4`
+- `0 <= lists[i].length <= 500`
+- `-10^4 <= lists[i][j] <= 10^4`
+- `lists[i]` is sorted in ascending order.
+- The sum of `lists[i].length` will not exceed `10^4`.
+
+## Approach: Min-Heap
+
+1. Put the head of every non-empty list into a min-heap, so the smallest current value is always on top.
+2. Pop the smallest node, attach it to the result list, then push that node's `next` node into the heap.
+3. Repeat until the heap is empty.
+
+The list index `i` in each heap tuple is a tie-breaker. When two values are equal, Python would otherwise try to compare `ListNode` objects and raise an error.
+
+## Solution (Python)
+
+```python
+import heapq
+
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, val=0, next=None):
+#         self.val = val
+#         self.next = next
+
+class Solution:
+    def mergeKLists(self, lists):
+        heap = []
+
+        # Push the head of each non-empty list: (value, list index, node)
+        for i, node in enumerate(lists):
+            if node:
+                heapq.heappush(heap, (node.val, i, node))
+
+        dummy = ListNode(0)
+        tail = dummy
+
+        while heap:
+            val, i, node = heapq.heappop(heap)
+            tail.next = node
+            tail = tail.next
+
+            if node.next:
+                heapq.heappush(heap, (node.next.val, i, node.next))
+
+        return dummy.next
+```
+
+## Dry Run
+
+Input: `[[1,4,5],[1,3,4],[2,6]]`
+
+- Heap starts with the three heads: `1, 1, 2`.
+- Pop `1`, push `4`. Pop `1`, push `3`. Pop `2`, push `6`.
+- Continuing this way gives `[1,1,2,3,4,4,5,6]`.
+
+## Complexity
+
+| | Complexity | Notes |
+|---|---|---|
+| Time | `O(N log k)` | `N` = total number of nodes, `k` = number of lists |
+| Space | `O(k)` | The heap holds at most one node per list |
+
+## Alternative: Divide and Conquer
+
+Merge the lists in pairs, then merge the results in pairs again, until one list remains. This has the same `O(N log k)` time and avoids the heap.
+
+## Run Locally
+
+The file `merge_k_sorted_lists.py` contains the solution with helper functions and test cases:
+
+```
+python merge_k_sorted_lists.py
+```
+
+---
+
 # Sorting in DSA
 
 Sorting is the process of arranging data (numbers, strings, records) in **ascending** or **descending** order. It is a foundational concept in Data Structures and Algorithms and underpins binary search, interval merging, scheduling, database indexing, and many algorithmic optimizations.
@@ -165,8 +287,6 @@ class Solution:
 ## Conclusion
 
 Sorting is one of the most fundamental concepts in DSA and forms the basis of many advanced algorithms and interview problems. Choosing the right algorithm depends on data size, range, memory constraints, and whether stability matters.
-
-
 
 ## References
 
